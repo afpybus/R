@@ -19,7 +19,6 @@ color.legend = function(color.df){
   barplot(rep(1,nrow(color.df)),col=color.df$values,names.arg = color.df$breaks,las=2,horiz=TRUE)
 }
 
-
 # remove outliers (points outside of coef*IQR from Q1 or Q4 values)
 remove_outliers = function(df,var,coef=3){
   colnames(df)[colnames(df)==var]="TEMP"
@@ -36,7 +35,6 @@ remove_outliers = function(df,var,coef=3){
 # tidy-compatible removal of specified array elements (for use in piping ops)
 rm_from_array = function(array,values_to_remove){array[!array %in% values_to_remove]}
 
-
 # create a data frame of Pearson's correlation statistics given a matrix of values and a predictor variable array
 corr_across = function(feature.matrix,predictor.array){
   rcorr_out = Hmisc::rcorr(cbind(predictor.array,feature.matrix))
@@ -49,7 +47,6 @@ corr_across = function(feature.matrix,predictor.array){
     RSQ = R^2,
     n = rcorr_out$n[1,2:ncol(rcorr_out$r)])
 }
-
 
 
 ## DIFFERENTIAL EXPRESSION ANALYSIS FUNCTIONS #########################
@@ -129,10 +126,11 @@ volcano_cm = function(comp_means_output,x="mean_dif",max_overlaps=10){
 }
 
 # Volcano plot for DE results, text labels regardless of significance
-DE_volcano_labelall = function(DE_df,max_overlaps=10){
-  ggplot(DE_df,aes(x=mean_dif,y=log10p.adj,color=sig_increased_in,label=feature))+
+volcano_cm_labelall = function(comp_means_output,x="mean_dif",max_overlaps=10){
+  colnames(comp_means_output)[colnames(comp_means_output)==x] = "x_var"
+  ggplot(comp_means_output,aes(x=x_var,y=log10p.adj,color=sig_increased_in,label=feature))+
     geom_hline(yintercept = -log10(0.05),lty=2,color="darkgray")+
-    geom_text(aes(x=max(mean_dif)-0.07*sum(range(abs(mean_dif))),
+    geom_text(aes(x=max(x_var)-0.07*sum(range(abs(x_var))),
                   y=-log10(0.05)+0.03*sum(range(abs(log10p.adj))),label="p=0.05"),color="darkgray") +
     geom_point(size=2) +
     geom_point(size=2,shape=1,color="black") +
