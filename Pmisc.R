@@ -12,7 +12,10 @@ add_sig = function(x){case_when(
 lu = function(x){length(unique(x))}
 
 # scale_color_manual for my formatted color tibbles
-color.scm = function(color.df){scale_color_manual(values=color.df$values,breaks=color.df$breaks)}
+scm = function(color.df){scale_color_manual(values=color.df$values,breaks=color.df$breaks)}
+
+# scale_fill_manual for my formatted color tibbles
+sfm = function(color.df){scale_fill_manual(values=color.df$values,breaks=color.df$breaks)}
 
 # create legend from my formatted color tibbles
 color.legend = function(color.df){
