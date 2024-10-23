@@ -187,8 +187,11 @@ make_pairs = function(feature_list){
 ### SURVIVAL ANALYSIS ####################
 
 # must have time (time to death or last seen) and status (alive/dead) columns in data frame
-coxph_all = function(df,feature.names){
-  ind_remove = which(colSums(!is.na(df[,genenames]))<5)
+coxph_all = function(df,feature.names,time_col="time",status_col="status"){
+  colnames(df)[colnames(df)==time_col] = "time_coxph"
+  colnames(df)[colnames(df)==status_col] = "status_coxph"
+  df=filter(df,!is.na(time_coxph),!is.na(status_coxph))
+  ind_remove = which(colSums(!is.na(df[,feature.names]))<5)
   if(length(ind_remove)>0){
     print(paste0("Removing ",str_flatten_comma(feature.names[ind_remove])," for having fewer than 5 values."))
     feature.names = feature.names[-ind_remove]}
@@ -196,8 +199,8 @@ coxph_all = function(df,feature.names){
     df_itr = df
     colnames(df_itr)[colnames(df_itr)==feature.names[i]] = "feature"
     tibble(feature=feature.names[i],
-           wald_p=summary(survival::coxph(tidycmprsk::Surv(time, status) ~ feature, data = df_itr))$waldtest[3],
-           hazard_ratio=summary(survival::coxph(tidycmprsk::Surv(time, status) ~ feature, data = df_itr))$coefficients[2])
+           wald_p=summary(survival::coxph(tidycmprsk::Surv(time_coxph, status_coxph) ~ feature, data = df_itr))$waldtest[3],
+           hazard_ratio=summary(survival::coxph(tidycmprsk::Surv(time_coxph, status_coxph) ~ feature, data = df_itr))$coefficients[2])
   }) %>% bind_rows() 
   out$p.adj = p.adjust(out$wald_p,method="fdr")
   out$p.signif = add_sig(out$p.adj)
