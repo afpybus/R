@@ -25,7 +25,7 @@ scm = function(color.df){scale_color_manual(values=color.df$values,breaks=color.
 sfm = function(color.df){scale_fill_manual(values=color.df$values,breaks=color.df$breaks)}
 
 # add violin and boxplots together
-geom_vb=function(box.width=0.2,box.fill="gray"){list(geom_violin(),geom_boxplot(width=box_width,fill=box.fill))}
+geom_vb=function(box.width=0.2,box.fill="gray"){list(geom_violin(),geom_boxplot(width=box.width,fill=box.fill))}
 
 # create legend from my formatted color tibbles
 color.legend = function(color.df){
