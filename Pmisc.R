@@ -38,6 +38,12 @@ remove_outliers = function(df,var,coef=3){
 # tidy-compatible removal of specified array elements (for use in piping ops)
 rm_from_array = function(array,values_to_remove){array[!array %in% values_to_remove]}
 
+# tidy-compatible substitution of character pattern from all colnames
+gsub_colnames = function(df,pattern,replacement=""){
+  new_colnames = gsub(pattern,replacement,colnames(df))
+  colnames(df) = new_colnames
+  return(df)}
+
 # create a data frame of Pearson's correlation statistics given a matrix of values and a predictor variable array
 corr_across = function(feature.matrix,predictor.array){
   rcorr_out = Hmisc::rcorr(cbind(predictor.array,feature.matrix))
