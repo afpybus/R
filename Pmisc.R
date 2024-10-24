@@ -300,34 +300,39 @@ cor_hm <- function(mat, title="", x.str = "", y.str = "",
 
 # UPSET PLOTS ##############
 
-upset_plot = function(df,value=TRUE){
+upset_plot = function(df,value=TRUE,cex.text=1){
   df = mutate_all(df,~case_when(.x==value~1,TRUE~NA))
+  df = mutate(df,across(everything(),as.character))
   for(col in 1:ncol(df)){df[,col][df[,col]==1]=colnames(df)[col]}
   df = rowwise(df) %>% mutate(aggregate=list(c_across()))
   ggplot(df,aes(x=aggregate)) +
     geom_bar() +
-    geom_text(stat='count', aes(label=after_stat(count)), vjust=-0.7) +
+    theme_minimal()+ ylab(paste0("Count (n=",nrow(df),")")) + 
+    geom_text(stat='count', aes(label=after_stat(count)), vjust=-0.7,size=3.88*cex.text) +
     ggupset::scale_x_upset() +
     scale_y_continuous(expand = expansion(mult=c(0,0.09))) +
-    theme_minimal()+ ylab(paste0("Count (n=",nrow(df),")")) + 
     xlab("Combinations") + ggeasy::easy_center_title()
 }
 
-upset_side = function(df,value=TRUE,side="left"){
+upset_side = function(df,value=TRUE,side="left",add_percent=TRUE,expand=0.2,cex.text=1){
   df = mutate_all(df,~case_when(.x==value~1,TRUE~NA))
   plot_df=colSums(df,na.rm=TRUE) %>% enframe(value="count") %>% arrange(count) %>%
-    mutate(name=factor(name,levels=name)) 
+    mutate(name=factor(name,levels=name)) %>%
+    mutate(perc_label=paste0("(",as.character(round(100*count/nrow(df),0)),"%)"))
+  if(add_percent!=TRUE){plot_df$perc_label=""}
   if(side=="left"){
-    p=ggplot(plot_df,aes(x=name,y=count,label=count)) + geom_col() + geom_text(hjust=1.1) + theme_minimal() + coord_flip() + 
-      scale_y_reverse(expand = expansion(mult=c(0.1,0))) + scale_x_discrete(name = "", position = "top")+
+    p=ggplot(plot_df,aes(x=name,y=count)) + geom_col() + theme_minimal() + coord_flip() + 
+      geom_text(aes(label=paste0(count,perc_label)),hjust=1.1,size=3.88*cex.text) +
+      scale_y_reverse(expand = expansion(mult=c(expand,0))) + scale_x_discrete(name = "", position = "top")+
       ylab(paste0("Set Size (n=",nrow(df),")"))}
   if(side=="right"){
-    p=ggplot(plot_df,aes(x=name,y=count,label=count)) + geom_col() + geom_text(hjust=-0.1) + theme_minimal() + coord_flip() + 
-      scale_y_continuous(expand = expansion(mult=c(0,0.1))) + scale_x_discrete(name="") +
+    p=ggplot(plot_df,aes(x=name,y=count)) + geom_col() + theme_minimal() + coord_flip() + 
+      geom_text(aes(label=paste0(count,perc_label)),hjust=-0.1,size=3.88*cex.text) +
+      scale_y_continuous(expand = expansion(mult=c(0,expand))) + scale_x_discrete(name="") +
       ylab(paste0("Set Size (n=",nrow(df),")"))}
   return(p)
 }
-
+  
 
 # OPLS #############
 
