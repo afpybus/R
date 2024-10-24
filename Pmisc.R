@@ -1,4 +1,6 @@
 
+# TRULY RANDOM STUFF ################
+
 # simple function for translating numeric p-values into significance notation
 add_sig = function(x){case_when(
   x>=0.05~"ns",
@@ -11,29 +13,27 @@ add_sig = function(x){case_when(
 # length of unique values of x
 lu = function(x){length(unique(x))}
 
+
+
+
+# FIGURES #################
+
 # scale_color_manual for my formatted color tibbles
 scm = function(color.df){scale_color_manual(values=color.df$values,breaks=color.df$breaks)}
 
 # scale_fill_manual for my formatted color tibbles
 sfm = function(color.df){scale_fill_manual(values=color.df$values,breaks=color.df$breaks)}
 
+# add violin and boxplots together
+geom_vb=function(box.width=0.2,box.fill="gray"){list(geom_violin(),geom_boxplot(width=box_width,fill=box.fill))}
+
 # create legend from my formatted color tibbles
 color.legend = function(color.df){
   barplot(rep(1,nrow(color.df)),col=color.df$values,names.arg = color.df$breaks,las=2,horiz=TRUE)
 }
 
-# remove outliers (points outside of coef*IQR from Q1 or Q4 values)
-remove_outliers = function(df,var,coef=3){
-  colnames(df)[colnames(df)==var]="TEMP"
-  values = df$TEMP
-  q=quantile(values) %>% unname()
-  iqr=q[4]-q[2]
-  lower_limit = q[2] - coef * iqr
-  upper_limit = q[4] + coef * iqr
-  df = filter(df,TEMP>=lower_limit,TEMP<=upper_limit)
-  colnames(df)[colnames(df)=="TEMP"]=var
-  return(df)
-}
+
+# PIPING-COMPATIBLE OPERATIONS #################
 
 # tidy-compatible removal of specified array elements (for use in piping ops)
 rm_from_array = function(array,values_to_remove){array[!array %in% values_to_remove]}
@@ -44,21 +44,8 @@ gsub_colnames = function(df,pattern,replacement=""){
   colnames(df) = new_colnames
   return(df)}
 
-# create a data frame of Pearson's correlation statistics given a matrix of values and a predictor variable array
-corr_across = function(feature.matrix,predictor.array){
-  rcorr_out = Hmisc::rcorr(cbind(predictor.array,feature.matrix))
-  tibble(
-    feature = colnames(rcorr_out$P)[2:ncol(rcorr_out$P)],
-    p = rcorr_out$P[1,2:ncol(rcorr_out$P)],
-    p.adj = p.adjust(p,method="fdr"),
-    p.signif = add_sig(p.adj),
-    R = rcorr_out$r[1,2:ncol(rcorr_out$r)],
-    RSQ = R^2,
-    n = rcorr_out$n[1,2:ncol(rcorr_out$r)])
-}
 
-
-## DIFFERENTIAL EXPRESSION ANALYSIS FUNCTIONS #########################
+# STAT FUNCTIONS #########################
 
 # create a data frame of statistical test results comparing between two groups or against null hypothesis of 0
 # df = data.frame with columns of features to be compared AND a group column for grouping (formula = feature ~ group)
@@ -179,9 +166,34 @@ DEF_boxplot_sig = function(data,DE,feature,grouping){
     scale_y_continuous(expand = expansion(mult=c(0.05,0.15)))
 }
 
+# create a data frame of Pearson's correlation statistics given a matrix of values and a predictor variable array
+corr_across = function(feature.matrix,predictor.array){
+  rcorr_out = Hmisc::rcorr(cbind(predictor.array,feature.matrix))
+  tibble(
+    feature = colnames(rcorr_out$P)[2:ncol(rcorr_out$P)],
+    p = rcorr_out$P[1,2:ncol(rcorr_out$P)],
+    p.adj = p.adjust(p,method="fdr"),
+    p.signif = add_sig(p.adj),
+    R = rcorr_out$r[1,2:ncol(rcorr_out$r)],
+    RSQ = R^2,
+    n = rcorr_out$n[1,2:ncol(rcorr_out$r)])
+}
 
 
-### FOR SPATIAL #######################
+# remove outliers (points outside of coef*IQR from Q1 or Q4 values)
+remove_outliers = function(df,var,coef=3){
+  colnames(df)[colnames(df)==var]="TEMP"
+  values = df$TEMP
+  q=quantile(values) %>% unname()
+  iqr=q[4]-q[2]
+  lower_limit = q[2] - coef * iqr
+  upper_limit = q[4] + coef * iqr
+  df = filter(df,TEMP>=lower_limit,TEMP<=upper_limit)
+  colnames(df)[colnames(df)=="TEMP"]=var
+  return(df)
+}
+
+# SPATIAL #######################
 
 # define function to create data frame containing all pairs of phenotypes to evaluate simple spatial metrics for
 make_pairs = function(feature_list){
@@ -190,7 +202,7 @@ make_pairs = function(feature_list){
 }
 
 
-### SURVIVAL ANALYSIS ####################
+# SURVIVAL ANALYSIS ####################
 
 # must have time (time to death or last seen) and status (alive/dead) columns in data frame
 coxph_all = function(df,feature.names,time_col="time",status_col="status"){
@@ -282,7 +294,7 @@ color.bar = function(bc, min, max=-min, nticks=5, ticks=seq(min, max, len=nticks
 }
 
 
-# # Correlation Heatmap ######################
+# Correlation heatmap
 cor_hm <- function(mat, title="", x.str = "", y.str = "",
                         color1 = "black", color2 = "white", color3 = "purple",
                         cex_r=1,cex_c=0.6,mar=c(12,13)){
