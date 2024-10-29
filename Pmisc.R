@@ -207,9 +207,14 @@ coxph_all = function(df,feature.names,time_col="time",status_col="status"){
   colnames(df)[colnames(df)==time_col] = "time_coxph"
   colnames(df)[colnames(df)==status_col] = "status_coxph"
   df=filter(df,!is.na(time_coxph),!is.na(status_coxph))
-  ind_remove = which(colSums(!is.na(df[,feature.names]))<5)
-  if(length(ind_remove)>0){
-    print(paste0("Removing ",str_flatten_comma(feature.names[ind_remove])," for having fewer than 5 values."))
+  ind_remove_5 = which(colSums(!is.na(df[,feature.names]))<5)
+  ind_remove_fct = which(sapply(df[,feature.names],function(x)length(na.exclude(unique(x))))<2)
+  if(length(ind_remove_5)>0 | length(ind_remove_fct)>0){
+    ind_remove = c(ind_remove_5,ind_remove_fct) %>% unique()
+    if(length(ind_remove_5)>0){print(paste0("Removing ",str_flatten_comma(feature.names[ind_remove_5]),
+                                            " for having fewer than 5 measurements"))}
+    if(length(ind_remove_fct)>0){print(paste0("Removing ",str_flatten_comma(feature.names[ind_remove_fct]),
+                                              " for having only 1 unique value"))}
     feature.names = feature.names[-ind_remove]}
   out = lapply(1:length(feature.names),function(i){
     df_itr = df
