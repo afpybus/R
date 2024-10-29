@@ -11,9 +11,7 @@ add_sig = function(x){case_when(
 )}
 
 # length of unique values of x
-lu = function(x){length(unique(x))}
-
-
+lu = function(x,na.rm=FALSE){if(na.rm){length(na.exclude(unique(x)))}else{length(unique(x))}}
 
 
 # FIGURES #################
