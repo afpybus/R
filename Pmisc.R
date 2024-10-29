@@ -225,6 +225,7 @@ coxph_all = function(df,feature.names,time_col="time",status_col="status"){
   }) %>% bind_rows() 
   out$p.adj = p.adjust(out$wald_p,method="fdr")
   out$p.signif = add_sig(out$p.adj)
+  out$n = nrow(df)
   out$result = case_when(out$p.signif != "ns" & out$hazard_ratio>1 ~"Increased Hazard",
                          out$p.signif != "ns" & out$hazard_ratio<1 ~"Decreased Hazard",
                          TRUE~"ns")
