@@ -13,6 +13,11 @@ add_sig = function(x){case_when(
 # length of unique values of x
 lu = function(x,na.rm=FALSE){if(na.rm){length(na.exclude(unique(x)))}else{length(unique(x))}}
 
+tibble_to_mat = function(df,col.rownames){
+  mat = df %>% select(-col.rownames) %>% as.matrix()
+  rownames(mat) = df[,col.rownames] %>% unlist()
+  return(mat)
+}
 
 # FIGURES #################
 
