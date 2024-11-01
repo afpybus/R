@@ -25,6 +25,11 @@ named_num_to_df = function(named_numeric){
   return(out)
 }
 
+select_as_array = function(df,col){
+  colnames(df)[colnames(df)==col] = "placeholder"
+  df$placeholder
+  }
+
 # FIGURES #################
 
 # scale_color_manual for my formatted color tibbles
