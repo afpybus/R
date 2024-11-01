@@ -19,6 +19,12 @@ tibble_to_mat = function(df,col.rownames){
   return(mat)
 }
 
+named_num_to_df = function(named_numeric){
+  out = tibble(names=names(named_numeric),
+               values=named_numeric)
+  return(out)
+}
+
 # FIGURES #################
 
 # scale_color_manual for my formatted color tibbles
