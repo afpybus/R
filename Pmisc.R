@@ -33,6 +33,9 @@ select_as_array = function(df,col){
 # calculate average slope of y ~ x (linear model)
 slope = function(x,y){as.numeric(lm(y~x)$coefficients[2])}
 
+# get earliest/latest values from matching arrays of dates/values
+earliest = function(dates,values){mean(values[dates==min(dates)])}
+latest = function(dates,values){mean(values[dates==max(dates)])}
 
 # FIGURES #################
 
