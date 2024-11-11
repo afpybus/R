@@ -28,7 +28,11 @@ named_num_to_df = function(named_numeric){
 select_as_array = function(df,col){
   colnames(df)[colnames(df)==col] = "placeholder"
   df$placeholder
-  }
+}
+
+# calculate average slope of y ~ x (linear model)
+slope = function(x,y){as.numeric(lm(y~x)$coefficients[2])}
+
 
 # FIGURES #################
 
