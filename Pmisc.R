@@ -37,6 +37,12 @@ slope = function(x,y){as.numeric(lm(y~x)$coefficients[2])}
 earliest = function(dates,values){mean(values[dates==min(dates)])}
 latest = function(dates,values){mean(values[dates==max(dates)])}
 
+# get default colors
+ggplotColours <- function(n = 6, h = c(0, 360) + 15){
+  if ((diff(h) %% 360) < 1) h[2] <- h[2] - 360/n
+  hcl(h = (seq(h[1], h[2], length = n)), c = 100, l = 65)
+}
+
 # FIGURES #################
 
 # scale_color_manual for my formatted color tibbles
