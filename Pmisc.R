@@ -80,6 +80,18 @@ gsub_colnames = function(df,pattern,replacement=""){
   colnames(df) = new_colnames
   return(df)}
 
+# get upper or lower triangle of a matrix, usually for correlation heatmaps
+get_upper_tri = function(mat){mat[lower.tri(mat)] <- NA; return(mat)}
+get_lower_tri = function(mat){mat[upper.tri(mat)] <- NA; return(mat)}
+
+# from sthda, reorder cormat for correlation heatmap display
+reorder_cormat <- function(cormat){
+  # Use correlation between variables as distance
+  dd <- as.dist((1-cormat)/2)
+  hc <- hclust(dd)
+  cormat <-cormat[hc$order, hc$order]
+}
+
 
 # STAT FUNCTIONS #########################
 
@@ -129,6 +141,7 @@ comp_means = function(df,feature_column_names,group_column_name=NA,compare_means
   DE$p.adj.format = format.pval(DE$p.adj,digits=1,eps = 1e-100) # create p.adj.format column for graphical formatted p-val display
   DE$log10p.adj = -log10(DE$p.adj)
   DE$fc = DE$mean.group1 / DE$mean.group2
+  DE$log2fc = log2(DE$fc)
   DE$mean_dif = DE$mean.group1 - DE$mean.group2
   DE = mutate(DE,increased_in=case_when(mean_dif >= 0 ~ group1,mean_dif < 0 ~ group2)) %>%
     rename(feature=.y.) %>%
