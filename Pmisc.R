@@ -37,11 +37,6 @@ slope = function(x,y){as.numeric(lm(y~x)$coefficients[2])}
 earliest = function(dates,values){mean(values[dates==min(dates)])}
 latest = function(dates,values){mean(values[dates==max(dates)])}
 
-# get default colors
-ggplotColours <- function(n = 6, h = c(0, 360) + 15){
-  if ((diff(h) %% 360) < 1) h[2] <- h[2] - 360/n
-  hcl(h = (seq(h[1], h[2], length = n)), c = 100, l = 65)
-}
 
 # FIGURES #################
 
@@ -59,6 +54,20 @@ color.legend = function(color.df){
   barplot(rep(1,nrow(color.df)),col=color.df$values,names.arg = color.df$breaks,las=2,horiz=TRUE)
 }
 
+# get default colors
+ggplotColours <- function(n = 6, h = c(0, 360) + 15){
+  if ((diff(h) %% 360) < 1) h[2] <- h[2] - 360/n
+  hcl(h = (seq(h[1], h[2], length = n)), c = 100, l = 65)
+}
+
+png_pdf = function(p,filename,width,height,res=1000){list(
+  png(paste0(filename,".png"),width,height,units="in",res=res),
+  print(p),
+  dev.off(),
+  cairo_pdf(paste0(filename,".pdf"),width,height),
+  print(p),
+  dev.off()
+)}
 
 # PIPING-COMPATIBLE OPERATIONS #################
 
