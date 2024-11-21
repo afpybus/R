@@ -49,6 +49,9 @@ sfm = function(color.df){scale_fill_manual(values=color.df$values,breaks=color.d
 # add violin and boxplots together
 geom_vb=function(box.width=0.2,box.fill="gray"){list(geom_violin(),geom_boxplot(width=box.width,fill=box.fill))}
 
+# title formatting for paper figures
+title_format = function(face="bold",hjust=0.5,size=11){theme(plot.title=element_text(face=face,hjust=hjust,size=size))}
+
 # create legend from my formatted color tibbles
 color.legend = function(color.df){
   barplot(rep(1,nrow(color.df)),col=color.df$values,names.arg = color.df$breaks,las=2,horiz=TRUE)
