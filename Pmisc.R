@@ -120,11 +120,15 @@ comp_means = function(df,feature_column_names,group_column_name=NA,compare_means
       stat_result = ggpubr::compare_means(data=df_iter,formula = feature_to_compare ~ group_to_compare,method=compare_means_method) 
       stat_result$mean.group1 = mean(df_iter$feature_to_compare[df_iter$group_to_compare==stat_result$group1],na.rm=TRUE) # mean of group 1
       stat_result$mean.group2 = mean(df_iter$feature_to_compare[df_iter$group_to_compare==stat_result$group2],na.rm=TRUE) # mean of group 2
+      stat_result$n.group1 = sum(!is.na(df_iter$feature_to_compare[df_iter$group_to_compare==stat_result$group1])) # sample size of group 1
+      stat_result$n.group2 = sum(!is.na(df_iter$feature_to_compare[df_iter$group_to_compare==stat_result$group2])) # sample size of group 2
     }else {
       stat_result = ggpubr::compare_means(data=df_iter,formula = feature_to_compare ~ 0,method=compare_means_method) %>%
         mutate(group1 = "STEP Cohort")
       stat_result$mean.group1 = mean(df_iter$feature_to_compare,na.rm=TRUE)
       stat_result$mean.group2 = 0
+      stat_result$n.group1 = sum(!is.na(df_iter$feature_to_compare))
+      stat_result$n.group2 = NA
     }
     
     # calculate stat results with compare_means
