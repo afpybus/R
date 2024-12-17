@@ -57,6 +57,23 @@ color.legend = function(color.df){
   barplot(rep(1,nrow(color.df)),col=color.df$values,names.arg = color.df$breaks,las=2,horiz=TRUE)
 }
 
+# create ggplot horizontal bar chart with counts at mid or top of fill
+bar.counts = function(df,x,fill,count.display="mid"){
+  df$x.var = df[,colnames(df)==x]
+  df$fill.var = df[,colnames(df)==fill]
+  p=ggplot(df,aes(x=fct_rev(fct_infreq(x.var)),fill=fill.var))+
+    geom_bar()+
+    coord_flip()+
+    theme_bw() +
+    scale_y_continuous(expand = expansion(mult=c(0,0.09))) +
+    ggtitle(paste0(x," w/ ",fill)) +
+    xlab(x)+
+    labs(fill=fill)+
+    ggeasy::easy_center_title()+ ggeasy::easy_legend_at("bottom")
+  if(count.display=="mid"){return(p+geom_text(aes(label=after_stat(count)),stat="count",hjust=0.5,position=position_stack(vjust=0.5)))}
+  if(count.display=="top"){return(p+geom_text(aes(label=after_stat(count)),stat="count",hjust=0))}
+}
+
 # get default colors
 ggplotColours <- function(n = 6, h = c(0, 360) + 15){
   if ((diff(h) %% 360) < 1) h[2] <- h[2] - 360/n
