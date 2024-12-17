@@ -58,7 +58,7 @@ color.legend = function(color.df){
 }
 
 # create ggplot horizontal bar chart with counts at mid or top of fill
-bar.counts = function(df,x,fill,count.display="mid"){
+bar.counts = function(df,x,fill=x,count.display="mid"){
   df$x.var = df[,colnames(df)==x]
   df$fill.var = df[,colnames(df)==fill]
   p=ggplot(df,aes(x=fct_rev(fct_infreq(x.var)),fill=fill.var))+
