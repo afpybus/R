@@ -74,6 +74,15 @@ bar.counts = function(df,x,fill=x,count.display="mid"){
   if(count.display=="top"){return(p+geom_text(aes(label=after_stat(count)),stat="count",hjust=0))}
 }
 
+# Create a grid of plots from a list of ggplot objects
+make_grid = function(ggplots_list,
+                     nrow=floor(sqrt(length(ggplots_list))),
+                     ncol=ceiling(length(ggplots_list)/nrow)){
+  plot.list = append(list(nrow=nrow,ncol=ncol),ggplots_list)
+  p=do.call(ggpubr::ggarrange,arg=plot.list) 
+  return(p)
+}
+
 # get default colors
 ggplotColours <- function(n = 6, h = c(0, 360) + 15){
   if ((diff(h) %% 360) < 1) h[2] <- h[2] - 360/n
