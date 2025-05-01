@@ -338,7 +338,7 @@ KM_categorical = function(df,gene,time_scale,reclass=TRUE){
   colnames(df)[gene_index] = "gene_cat"
   ggsurvfit::survfit2(tidycmprsk::Surv(time,status) ~ gene_cat, data = df) %>% 
     ggsurvfit::ggsurvfit() +
-    labs(x = time_scale,y = "Overall Survival Probability") +
+    labs(x = time_scale,y = "Survival Probability") +
     ggsurvfit::add_confidence_interval() +
     ggsurvfit::add_risktable() +
     ggtitle(paste0("Kaplan-Meier Survival by ",gene)) +
@@ -350,7 +350,7 @@ gene_OS_scatter = function(df,gene){
   df = mutate(df,vital_status = case_when(status==1~"DEAD",status==0~"ALIVE"))
   ggplot(data=df,mapping=aes_string(x="time",y=gene,color="vital_status")) +
     geom_point() +
-    xlab("Overall Survival") +
+    xlab("Survival") +
     stat_ellipse(level=0.68) +
     theme_minimal() +
     geom_hline(yintercept= median(gene_values,na.rm=TRUE),lty=2,color="gray") +
