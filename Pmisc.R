@@ -185,6 +185,14 @@ comp_means = function(df,feature_column_names,group_column_name=NA,compare_means
 }
 
 
+p.readjust = function(cm_out,p.adjust_method="fdr"){
+  cm_out = cm_out %>%
+    mutate(p.adj = p.adjust(p,method=p.adjust_method),
+           p.adj.signif = add_sig(p.adj),
+           p.adj.format = format.pval(p.adj,digits=1,eps = 1e-100),
+           log10p.adj = -log10(p.adj))
+}
+
 # Volcano plot for comp_means results, only add text labels for significant results
 volcano_cm = function(comp_means_output,x="mean_dif",max_overlaps=10){
   colnames(comp_means_output)[colnames(comp_means_output)==x] = "x_var"
